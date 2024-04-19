@@ -1,8 +1,10 @@
 const express = require('express');
 const router = express.Router();
 const verifyToken = require('../utils/verifyUser')
-const activitySelected = require('../controllers/activity.controller')
-router.get('/activities',verifyToken,activitySelected);
+const {activitySelected,createActivity} = require('../controllers/activity.controller')
 
+
+router.get('/',verifyToken,activitySelected);
+router.post('/',createActivity)
 
 module.exports = router;

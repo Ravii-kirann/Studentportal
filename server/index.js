@@ -11,6 +11,8 @@ const MealPlanRoute = require("./routes/mealPlan.route");
 const TextBookRoute = require("./routes/book.route");
 const BusTicketRoute = require("./routes/busTicket.route");
 const ActivityRoute = require('./routes/activity.route')
+const castVote = require("./routes/votes.route")
+
 dotenv.config();
 
 const app = express();
@@ -30,7 +32,8 @@ app.use("/api/findMyroom",RoommateRoute)
 app.use("/api/mealplan",MealPlanRoute)
 app.use('/api/book',TextBookRoute)
 app.use("/api/busTicket",BusTicketRoute)
-app.use("/api/activity",ActivityRoute)
+app.use("/api/activities",ActivityRoute)
+app.use("api/vote",castVote)
 
 // Error Handling Middleware
 
