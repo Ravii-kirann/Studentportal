@@ -33,7 +33,7 @@ app.use("/api/mealplan",MealPlanRoute)
 app.use('/api/book',TextBookRoute)
 app.use("/api/busTicket",BusTicketRoute)
 app.use("/api/activities",ActivityRoute)
-app.use("api/vote",castVote)
+app.use("/api/vote",castVote)
 
 // Error Handling Middleware
 
