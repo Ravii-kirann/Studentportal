@@ -65,71 +65,78 @@ const LogOut = async (req, res) => {
   res.clearCookie('access_token').status(200).json('Signout success!');
 }
 
+
+
 const forgotPassword = async (req, res) => {
-  try {
-      if (!req.body.email || typeof req.body.email !== 'string' || !req.body.email.includes('@')) {
-          return res.status(400).send("Invalid email address");
-      }
+    try {
+        if (!req.body.email || typeof req.body.email !== 'string' || !req.body.email.includes('@')) {
+            return res.status(400).send("Invalid email address");
+        }
 
-      const user = await User.findOne({ email: req.body.email });
-      if (!user) {
-          return res.status(400).send("User with given email doesn't exist");
-      }
-      
-      // Generate temporary token
-      const token = crypto.randomBytes(32).toString("hex");
-      console.log(token,"token")
+        const user = await User.findOne({ email: req.body.email });
+        if (!user) {
+            return res.status(400).send("User with given email doesn't exist");
+        }
 
-      // Update user's reset token and expiration time
-      user.resetPasswordToken = token;
-      user.resetPasswordExpires = Date.now() + 3600000; // Token expires in 1 hour
-      await user.save();
+        const secret = process.env.JWT_SECRET; // Use a fixed secret for generating token
+        const payload = {
+            email: user.email,
+            id: user._id
+        };
 
-      // Construct the reset password link
-      const link = `http://localhost:1337/reset-password/${encodeURIComponent(user.email)}/${token}`;
+        const token = jwt.sign(payload, secret, { expiresIn: '15m' });
 
-      // Send the reset password link for redirection
-     await  sendEmail(link)
-    
-  } catch (error) {
-      console.error(error);
-      res.status(500).send("An error occurred");
-  }
-}
-
+        // Construct the reset password link
+        const link = `http://localhost:1337/reset-password/${user._id}/${token}`;
+        console.log("Password reset link has been sent to your email:", link);
+        res.send("Password reset link has been sent to your email");
+    } catch (error) {
+        console.error(error);
+        res.status(500).send("An error occurred");
+    }
+};
 
 const resetPassword = async (req, res) => {
-  try {
-      const { email, token, password } = req.body ;
+    try {
+        const { id, token } = req.params;
+        const { password, confirmPassword } = req.body;
 
-      // Validate email, token, and password
-      if (!email || !token || !password) {
-          return res.status(400).send("Missing required parameters");
-      }
+        if (password !== confirmPassword) {
+            return res.status(400).send('Password does not match confirm password');
+        }
 
-      // Find user by email and reset token
-      const user = await User.findOne({
-          email: decodeURIComponent(email),
-          resetPasswordToken: token,
-          resetPasswordExpires: { $gt: Date.now() }, // Token must not be expired
-      });
+        // Validate email, token, and password
+        if (!id || !token || !password) {
+            return res.status(400).send("Missing required parameters");
+        }
 
-      if (!user) {
-          return res.status(400).send("Invalid or expired password reset link");
-      }
+        // Find user by id
+        const user = await User.findById(id);
+        if (!user) {
+            return res.status(400).send("User not found");
+        }
 
-      // Update user's password and clear reset token fields
-      user.password = password;
-      user.resetPasswordToken = undefined;
-      user.resetPasswordExpires = undefined;
-      await user.save();
+        // Verify the token
+        const secret = process.env.JWT_SECRET; // Use the same secret for verification
+        const payload = jwt.verify(token, secret);
 
-      res.send("Password reset successfully");
-  } catch (error) {
-      console.error(error);
-      res.status(500).send("An error occurred");
-  }
-}
+        if (payload.id !== id) {
+            return res.status(400).send("Invalid or expired password reset link");
+        }
+
+        // Update user's password
+        user.password = password;
+        await user.save();
+
+        res.send("Password reset successfully");
+    } catch (error) {
+        console.error(error);
+        res.status(500).send("An error occurred");
+    }
+};
+
+
+
 
 
 
