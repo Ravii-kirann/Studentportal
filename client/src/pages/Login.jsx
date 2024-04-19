@@ -6,7 +6,7 @@ import Header from '../components/header';
 const Login = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    email: '',
+    loginName: '',
     password: ''
   });
 
@@ -14,29 +14,7 @@ const Login = () => {
     setFormData({ ...formData, [name]: e?.target?.value });
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      // const response = await fetch('http://localhost:3000/api/login', {
-      //   method: 'POST',
-      //   headers: {
-      //     'Content-Type': 'application/json'
-      //   },
-      //   body: JSON.stringify(formData)
-      // });
-
-      // if (!response.ok) {
-      //   throw new Error('Network response was not ok');
-      // }
-
-      // const data = await response.json();
-      // if(data.user){
-      //   alert('Login Successful');
-      //   window.location.href = '/dashboard'
-      // }else{
-      //   alert('Please check your username and Password')
-      // }
-      // console.log('Login successful:', data);
+  const handleSubmit = () => {
       fetch('http://localhost:1337/api/auth/login', {
         method: 'POST',
         headers: {
@@ -44,30 +22,40 @@ const Login = () => {
         },
         body: JSON.stringify(formData)
       }).then(data => {
-        console.log('data', JSON.parse(data))
-        navigate('/login')
+        let result;
+        result = data.json();
+        return result
+      }).then((result) => {
+        console.log('result', result)
+        localStorage.setItem('userId', result?._id)
+        localStorage.setItem('userDetails', JSON.stringify(result))
+        if(result?._id) {
+          navigate('/');
+          console.log('login Success')
+        } else {
+          alert('Something Went wrong, Create Acount');
+        }
+      }).catch(err => {
+        console.log('err', err);
+        alert('The user is not found! create account');
       })
-    } catch (error) {
-      console.error('Error during login:', error);
-      
-    }
   };
 
   return (<>
   <Header />
     <div className={styles.container}>
         <h2 className={styles.h2}>Login</h2>
-        <form id="login-form" onSubmit={handleSubmit}>
+        <div id="login-form">
             <div className={styles.formGroup}>
                 <label className={styles.lable} for="loginName">Login Name:</label>
-                <input className={styles.input} type="text" id="loginName" name="loginName" required  value={formData.email} onChange={(e)=>handleChange(e, 'email')}/>
+                <input className={styles.input} type="text" id="loginName" name="loginName" required  value={formData.loginName} onChange={(e)=>handleChange(e, 'loginName')}/>
             </div>
             <div className={styles.formGroup}>
                 <label className={styles.lable} for="password">Password:</label>
                 <input className={styles.input} type="password" id="password" name="password" required value={formData.password} onChange={(e)=>handleChange(e, 'password')}/>
             </div>
-            <button className={styles.button} type="submit">Login</button>
-        </form>
+            <button className={styles.button} type="submit" onClick={handleSubmit}>Login</button>
+        </div>
         <p>Don't have an account? <Link to="/register">Register here</Link></p>
     </div>
     </>);
