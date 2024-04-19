@@ -1,9 +1,9 @@
 const mongoose = require('mongoose');
-
+const User = require("../models/user.model")
 const mealPlanSchema = new mongoose.Schema({
     studentId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Student',
+        ref: 'User',
         required: true
     },
     type: {
