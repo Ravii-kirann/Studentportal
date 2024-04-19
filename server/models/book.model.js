@@ -4,6 +4,35 @@ const User = require('./user.model');
 // Define the textbook schema
 const textbookSchema = new mongoose.Schema({
     // Define textbook schema fields...
+    title: {
+        type: String,
+        required: true
+    },
+    author: {
+        type: String,
+        required: true
+    },
+    isbn: {
+        type: String,
+        required: true,
+        unique: true
+    },
+    availability: {
+        type: Boolean,
+        default: false
+    },
+    libraryLocation: {
+        type: String,
+        required: true
+    },
+    bookstoreName: {
+        type: String,
+        required: true
+    },
+    price: {
+        type: Number,
+        required: true
+    }
 });
 
 const purchaseSchema = new mongoose.Schema({

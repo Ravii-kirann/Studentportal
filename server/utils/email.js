@@ -6,7 +6,7 @@ const sendEmail = async (option) => {
     console.log(option,"option")
     try {
         const transporter = nodeMailer.createTransport({
-            host: process.envEMAIL_HOSTm,
+            host: process.envEMAIL_HOST,
             port: process.env.EMAIL_PORT,
             secure: false, // Set to false if using TLS/SSL
             auth: {

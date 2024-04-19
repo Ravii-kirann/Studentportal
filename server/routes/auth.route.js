@@ -6,7 +6,7 @@ const verifyToken = require("../utils/verifyUser")
 
 router.post('/register',Register);
 router.post('/login',Login);
-router.get('/logout',verifyToken,LogOut );
+router.get('/logout',LogOut );
 router.get('/',test)
 router.post('/forgot-password',forgotPassword);
 router.get('/reset-password/:id/:token', resetPassword);
