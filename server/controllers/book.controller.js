@@ -1,31 +1,33 @@
-const {Textbook, Purchase, Student} = require('../models/book.model');
 
+const mongoose = require('mongoose');
+const { Textbook, Purchase, Student } = require('../models/book.model');
 
-const creatBook =async (req, res) => {
+const createBook = async (req, res) => {
     try {
-        const { title, author, isbn, availability, libraryLocation, bookstoreName,price } = req.body;
-          console.log("req.body",req.body)
+        const { title, author, isbn, availability, libraryLocation, bookstoreName, price } = req.body;
+        console.log("req.body", req.body);
+
         // Create a new book instance
         const newBook = new Textbook({
-            title : req.body.title,
-            author : req.body.author,
-            isbn: req.body.isbn,
-            availability : req.body.availability,
-            libraryLocation : req.body.libraryLocation,
-            bookstoreName : req.body.bookstoreName,
-            price : req.body.price
+            title,
+            author,
+            isbn,
+            availability,
+            libraryLocation,
+            bookstoreName,
+            price
         });
 
         // Save the new book to the database
         await newBook.save();
 
         // Send a success response
-        res.status(201).json({ message: 'book created successfully', book: newBook });
+        res.status(201).json({ message: 'Book created successfully', book: newBook });
     } catch (error) {
-        console.error(error);
+        console.error('Error creating book:', error);
         res.status(500).json({ error: 'An error occurred while creating the book' });
     }
-}
+};
 
 const searchBook = async (req, res) => {
     try {
@@ -33,52 +35,51 @@ const searchBook = async (req, res) => {
 
         let data = await Textbook.find({
             $or: [
-                { "title": { $regex: new RegExp(req.params.key, 'i') } }, // Case-insensitive search for first name
-                { "author": { $regex: new RegExp(req.params.key, 'i') } }, // Case-insensitive search for last name
-                { "isbn": { $regex: new RegExp(req.params.key, 'i') } } // Case-insensitive search for department
+                { "title": { $regex: new RegExp(req.params.key, 'i') } }, // Case-insensitive search for title
+                { "author": { $regex: new RegExp(req.params.key, 'i') } }, // Case-insensitive search for author
+                { "isbn": { $regex: new RegExp(req.params.key, 'i') } } // Case-insensitive search for ISBN
             ]
         });
         res.send(data);
     } catch (error) {
-        console.error(error);
+        console.error('Error searching book:', error);
         res.status(500).send("An error occurred");
     }
 };
+
 const purchaseTextbook = async (req, res) => {
     try {
-        console.log(req.body, "reqqqq"); // Corrected to log req.body
+        console.log(req.body, "reqqqq"); 
         const { userId, textbookId } = req.body;
+
+       
+        const totalSpent = await Purchase.aggregate([
+            { $match: { userId: mongoose.Types.ObjectId(userId) } },
+            { $group: { _id: null, totalAmount: { $sum: '$amount' } } }
+        ]);
+
+        if (totalSpent.length > 0 && totalSpent[0].totalAmount > 200) {
+           
+            console.log('Discount of 10% applied for the next purchase.');
+        }
 
         // Create a purchase record
         const purchase = new Purchase({
             userId,
             textbookId,
-            purchaseDate: new Date()
+            purchaseDate: new Date(),
+            totalAmount: totalSpent.length > 0 ? totalSpent[0].totalAmount : 0
         });
 
         // Save the purchase record to the database
         await purchase.save();
-
-        // Check if the total amount spent by the user exceeds $200
-        const totalSpent = await Purchase.aggregate([
-            { $match: { userId: mongoose.Types.ObjectId(userId) } },
-            { $group: { _id: null, totalAmount: { $sum: '$amount' } } }
-        ]);
-        
-        if (totalSpent.length > 0 && totalSpent[0].totalAmount > 200) {
-            // Apply a 10% discount for the next purchase
-            // You can store this information in the user's document for future use
-            // For example: await User.findByIdAndUpdate(userId, { $set: { discount: 0.1 } });
-            console.log('Discount of 10% applied for the next purchase.');
-        }
 
         res.status(201).json({ message: 'Textbook purchased successfully' });
     } catch (error) {
         console.error('Error purchasing textbook:', error);
         res.status(500).json({ error: 'An error occurred while purchasing textbook' });
     }
-}
-
+};
 
 // Controller for retrieving purchase history
 const getPurchaseHistory = async (req, res) => {
@@ -93,7 +94,6 @@ const getPurchaseHistory = async (req, res) => {
         console.error('Error retrieving purchase history:', error);
         res.status(500).json({ error: 'An error occurred while retrieving purchase history' });
     }
-}
+};
 
-
-module.exports = {creatBook,searchBook ,purchaseTextbook,getPurchaseHistory}
+module.exports = { createBook, searchBook, purchaseTextbook, getPurchaseHistory };

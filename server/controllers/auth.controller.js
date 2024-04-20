@@ -51,8 +51,8 @@ const Login = async (req, res, next) => {
       return next(errorHandler(401, 'Invalid email or password'));
     }
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
-    const expiryDate = new Date(Date.now() + 3600000);
-    res.cookie('access_token', token, { httpOnly: true, expires: expiryDate }).status(200).json(user);
+   
+    res.cookie('access_token', token, { httpOnly: true, expiresIn: '30d' }).status(200).json(user);
   } catch (error) {
     console.error('Error logging in:', error);
     next(errorHandler(500, 'Failed to log in'));
