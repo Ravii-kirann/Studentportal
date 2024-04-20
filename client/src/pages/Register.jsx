@@ -23,39 +23,34 @@ function Register() {
   };
 
   const handleSubmit = async (e) => {
+    if (formData?.password !== formData?.confirmPassword) {
+      return alert('Please enter the password and confirm password same')
+    }
     e.preventDefault();
-    try {
-      // const response = await fetch('http://localhost:1337/api/register', {
-      //   method: 'POST',
-      //   headers: {
-      //     'Content-Type': 'application/json'
-      //   },
-      //   body: JSON.stringify(formData)
-      // });
-  
-      // if (!response.ok) {
-      //   throw new Error('Network response was not ok');
-      // }
-
-      // Redirect to login page after successful registration
-      fetch('http://localhost:1337/api/register', {
+      fetch('http://localhost:1337/api/auth/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify(formData)
       }).then(data => {
-        console.log('data', JSON.parse(data))
-        navigate('/login');
+        let result;
+        result = data.json();
+        console.log('data', data);
+        return result
+      }).then((result) => {
+        console.log('result', result)
+        if(result?.status === 'ok') {
+          navigate('/login');
+          console.log('Register Success')
+        } else {
+          alert('Something Went wrong! retry after refresh');
+        }
       }).catch(err => {
-        console.error('Error during registration:', err);
+        console.log('err', err);
+        alert('Something Went wrong! retry after refresh');
       })
-  
-      // const data = await response.json();
-      // console.log('Registration successful:', data);
-    } catch (error) {
-      console.error('Error during registration:', error);
-    }
+
   };
   
 

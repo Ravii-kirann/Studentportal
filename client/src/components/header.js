@@ -6,7 +6,30 @@ export default function Header() {
     const navigate = useNavigate();
     const [view, setView] = useState(false);
     const handleLogout = () => {
-        alert('logout bruh')
+        fetch('http://localhost:1337/api/auth/logout', {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+          }).then(data => {
+            let result;
+            console.log('data', data)
+            result = data.json();
+            return result
+          }).then(result => {
+            console.log('result', result)
+            if (result === 'Signout success!') {
+                navigate('/login');
+                localStorage.setItem('userId', '');
+                localStorage.setItem('userDetails', '{}');
+            } else {
+            console.log('result not ok', result)
+            alert('Something went wrong try again after refresh');
+            } 
+          }).catch(err => {
+            console.log('err', err);
+            alert('Something went wrong try again after refresh');
+          })
     };
   return (
     <div style={{display: 'flex', width: '90%', margin:'1rem 5%', justifyContent: 'space-between', alignItems: 'center' }}>

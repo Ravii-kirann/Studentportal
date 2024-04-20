@@ -6,41 +6,14 @@ import { useNavigate  } from 'react-router-dom';
 // import { useNavigate } from 'react-router-dom';
 const Dashboard = () => {
     const navigate = useNavigate();
-    // useEffect(() => {
-    //     const userToken = localStorage.getItem('token');
-    //     const userID= localStorage.getItem('userId')
-    //     if(!userID) {
-    //         navigate('/login')
-    //     }
-    // },[])
-  //  const navigate = useNavigate()
-  //  console.log(navigate,"navigate")
-    // async function populateQuote() {
-    //     try {
-    //         const req = await fetch('http://localhost:1337/api/quote', {
-    //             headers: {
-    //                 'x-access-token': localStorage.getItem('token'),
-    //             }
-    //         });
-    //         const data = await req.json(); // Await the json() method call
-    //         console.log(data);
-    //     } catch (error) {
-    //         console.error('Error fetching quote:', error);
-    //     }
-    // }
-
-    // useEffect(() => {
-    //     // const token = localStorage.getItem('token');
-    //     // if (token) {
-    //     //     // const user = jwt.(token);
-    //     //     if (!user) {
-    //     //         localStorage.removeItem('token');
-    //     //      //   navigate('/login');
-    //     //     } else {
-    //     //         populateQuote();
-    //     //     }
-    //     }
-    // }, []);
+    useEffect(() => {
+        const userId= localStorage.getItem('userId');
+        console.log('userId', userId)
+        if(!userId) {
+            console.log('navigate to login')
+            navigate('/login')
+        }
+    },[navigate])
     
 
     return (<>

@@ -1,7 +1,9 @@
 import React, { useState } from 'react'
 import Header from '../components/header';
+import { useNavigate } from 'react-router-dom';
 
 export default function People() {
+    const navigate = useNavigate();
     const [people, setPeople] = useState([]);
     const [search, setSearch] = useState('');
 
@@ -12,10 +14,22 @@ export default function People() {
           'Content-Type': 'application/json'
         },
       }).then(data => {
-        console.log('data', JSON.parse(data))
-      }).catch(err =>{
-        console.log('err', err)
-      })
+        let result;
+            console.log('data', data)
+            result = data.json();
+            return result
+          }).then(result => {
+            console.log('result', result)
+            if (result === 'Signout success!') {
+               
+            } else {
+            console.log('result not ok', result)
+            alert('Something went wrong! try again after refresh');
+            } 
+          }).catch(err => {
+            console.log('err', err);
+            alert('Something went wrong! try again after refresh');
+          })
     }
   return (
     <>

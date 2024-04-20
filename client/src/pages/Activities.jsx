@@ -1,7 +1,42 @@
-import React from 'react'
+import React, {useEffect, useState} from 'react'
 import Header from '../components/header'
 
 export default function Activities() {
+    const [activities, setActivities] = useState([]);
+    const [dates, setDates] = useState({startDate: '', endDate: ''});
+
+    const taskChange = (e, names) => {
+        console.log('value', e.target.value)
+        setDates(prev => ({...prev, [names]: e?.target?.value}))
+    };
+
+    const HandleSubmit = () => {
+        fetch(`http://localhost:1337/api/activities/`, {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(dates)
+            }).then(data => {
+                let result;
+                console.log('data', data)
+                result = data.json();
+                return result
+              }).then(result => {
+                console.log('result', result)
+                if (result === 'Signout success!') {
+                   
+                } else {
+                console.log('result not ok', result)
+                alert('Something went wrong! try again after refresh');
+                } 
+              }).catch(err => {
+                console.log('err', err);
+                alert('Something went wrong! try again after refresh');
+              })
+    };
+
+
   return (
     <>
     <Header />
@@ -9,10 +44,10 @@ export default function Activities() {
         <h1>Sports Activities and Parties</h1>
         <div class="filters">
             <label for="startDate">Start Date:</label>
-            <input type="date" id="startDate" />
+            <input type="date" id="startDate" onChange={(e) => {taskChange(e, 'startDate')}}/>
             <label for="endDate">End Date:</label>
-            <input type="date" id="endDate" />
-            <button onclick="searchActivities()">Search</button>
+            <input type="date" id="endDate" onChange={(e) => {taskChange(e, 'endDate')}}/>
+            <button onClick={() => {HandleSubmit()}}>Search</button>
         </div>
         <div class="activities">
         </div>

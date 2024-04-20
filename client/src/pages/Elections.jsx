@@ -1,7 +1,45 @@
-import React from 'react'
+import React, {useState} from 'react'
 import Header from '../components/header'
+import { useNavigate } from 'react-router-dom';
 
 export default function Elections() {
+    const [selected, setSelected] = useState('');
+    const [winner, setWinner] = useState('')
+    const users = ['John', 'Mary', 'Susan']
+    let navigate = useNavigate();
+
+    const handleChange = (e) => {
+        console.log('e', e.target.value, e.target.checked)
+        if (e.target.checked) {
+            setSelected(`${e.target.value}`)
+        }
+    };
+    const handleVoteSubmit = () => {
+        fetch('http://localhost:1337/api/vote/', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({candidate : selected})
+        }).then(data => {
+          let result;
+          result = data.json();
+          console.log('data', data);
+          return result
+        }).then((result) => {
+          console.log('result', result)
+          if(result?.message === "Vote recorded successfully") {
+            console.log('Register Success')
+            setWinner(users[Math.floor(Math.random()*3)])
+          } else {
+            alert('Something Went wrong! retry after refresh');
+          }
+        }).catch(err => {
+          console.log('err', err);
+          alert('Something Went wrong! retry after refresh');
+        })
+    }
+
   return (
     <>
         <Header />
@@ -9,18 +47,18 @@ export default function Elections() {
             <h1>Student Union Election Poll</h1>
             <div class="poll">
                 <h2>Vote for the Next Head of Student Union:</h2>
-                <form id="pollForm">
+                <div id="pollForm">
                     <label for="candidateJohn">John:</label>
-                    <input type="radio" id="candidateJohn" name="candidate" value="John" />
+                    <input type="radio" id="candidateJohn" name="candidate" value="John" onChange={(e) => handleChange(e)} />
                     <label for="candidateMary">Mary:</label>
-                    <input type="radio" id="candidateMary" name="candidate" value="Mary" />
+                    <input type="radio" id="candidateMary" name="candidate" value="Mary" onChange={(e) => handleChange(e)} />
                     <label for="candidateSusan">Susan:</label>
-                    <input type="radio" id="candidateSusan" name="candidate" value="Susan" />
-                    <button type="submit">Vote</button>
-                </form>
+                    <input type="radio" id="candidateSusan" name="candidate" value="Susan" onChange={(e) => handleChange(e)} />
+                    <button type="submit" onClick={()  => {handleVoteSubmit()}}>Vote</button>
+                </div>
             </div>
             <div class="results">
-                <h2>Results:</h2>
+                <h2>Results: {winner ? winner : ''}</h2>
                 <div id="resultsChart" class="chart">
                 </div>
             </div>
