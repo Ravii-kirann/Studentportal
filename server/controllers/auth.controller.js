@@ -53,6 +53,7 @@ const Login = async (req, res, next) => {
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
    
     res.cookie('access_token', token, { httpOnly: true, expiresIn: '30d' }).status(200).json(user);
+    res.send(user)
   } catch (error) {
     console.error('Error logging in:', error);
     next(errorHandler(500, 'Failed to log in'));

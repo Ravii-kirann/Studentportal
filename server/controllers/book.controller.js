@@ -52,26 +52,16 @@ const purchaseTextbook = async (req, res) => {
         console.log(req.body, "reqqqq"); 
         const { userId, textbookId } = req.body;
 
-       
-        const totalSpent = await Purchase.aggregate([
-            { $match: { userId: mongoose.Types.ObjectId(userId) } },
-            { $group: { _id: null, totalAmount: { $sum: '$amount' } } }
-        ]);
-
-        if (totalSpent.length > 0 && totalSpent[0].totalAmount > 200) {
-           
-            console.log('Discount of 10% applied for the next purchase.');
-        }
-
-        // Create a purchase record
+        const book = await Textbook.findById(textbookId);
+        const price = book.totalAmount
+        
         const purchase = new Purchase({
-            userId,
+            studentId : userId,
             textbookId,
             purchaseDate: new Date(),
-            totalAmount: totalSpent.length > 0 ? totalSpent[0].totalAmount : 0
+            totalAmount: price
         });
 
-        // Save the purchase record to the database
         await purchase.save();
 
         res.status(201).json({ message: 'Textbook purchased successfully' });
