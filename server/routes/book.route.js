@@ -5,6 +5,6 @@ const verifyToken = require("../utils/verifyUser");
 
 router.post('/', createBook);
 router.get('/search/:key',verifyToken, searchBook);
-router.get('/textbooks/purchase',verifyToken, purchaseTextbook);
+router.post('/textbooks/purchase',verifyToken, purchaseTextbook);
 router.get('/users/:userId/purchases', getUserPurchases);
 module.exports = router;

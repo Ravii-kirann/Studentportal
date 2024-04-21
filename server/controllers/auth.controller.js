@@ -11,16 +11,16 @@ const test = (req, res) => {
 }
 
 const Register = async (req, res, next) => {
-  console.log(req.body,"req.body")
+  console.log(req.body, "req.body")
   try {
-    const { password, confirmPassword } = req.params;
-
+    const { password, confirmPassword } = req.body; // Changed from req.params to req.body
+    const salt = await bcrypt.genSalt(10);
     // Check if passwords match
     if (password !== confirmPassword) {
-        return res.status(400).json({ error: 'Passwords do not match' });
+      return res.status(400).json({ error: 'Passwords do not match' });
     }
-   
-    const hashedPassword = bcrypt.hashSync(password, 10);
+
+    const hashedPassword = await bcrypt.hash(password, salt); // Changed to async method
     const user = await User.create({
       firstName: req.body.firstName,
       lastName: req.body.lastName,
@@ -46,15 +46,15 @@ const Login = async (req, res, next) => {
     if (!user) {
       return next(errorHandler(404, 'User not found!'));
     }
-    const validPassword = bcrypt.compareSync(req.body.password, user.password);
+    const validPassword = await bcrypt.compare(req.body.password, user.password); // Changed to async method
     if (!validPassword) {
       return next(errorHandler(401, 'Invalid email or password'));
     }
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
-   
+
     res.set('Authorization', `${token}`); // Set token in the header
     res.status(200).json({ user, token });
-   
+
   } catch (error) {
     console.error('Error logging in:', error);
     next(errorHandler(500, 'Failed to log in'));
