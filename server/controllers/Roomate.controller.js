@@ -4,7 +4,7 @@ const Roommate = require('../models/roomate.model');
 const RoommateSearch = async (req, res) => {
     try {
         const { gender, moveInDate, approxPrice, page = 1, limit = 10 } = req.query;
-
+        console.log(req.query,"req.query")
         // Construct the search query based on the provided preferences
         const searchQuery = {};
         if (gender) {
@@ -21,7 +21,7 @@ const RoommateSearch = async (req, res) => {
         const roommates = await Roommate.find(searchQuery)
             .skip((page - 1) * limit)
             .limit(limit);
-
+         console.log(roommates,"roomates")
         res.json(roommates);
     } catch (error) {
         console.error(error);
@@ -50,6 +50,7 @@ const createRoommate = async (req, res) => {
         await roommate.save();
 
         res.status(201).json(roommate);
+        console.log(roommate)
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'An error occurred while creating a roommate' });
