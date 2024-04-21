@@ -52,7 +52,7 @@ const Login = async (req, res, next) => {
     }
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
    
-    res.set('Authorization', `Bearer ${token}`); // Set token in the header
+    res.set('Authorization', `${token}`); // Set token in the header
     res.status(200).json({ user, token });
    
   } catch (error) {
@@ -84,11 +84,17 @@ const forgotPassword = async (req, res) => {
             id: user._id
         };
 
-        const token = jwt.sign(payload, secret, { expiresIn: '15m' });
+        const token = jwt.sign(payload, secret, { expiresIn: '30m' });
 
         // Construct the reset password link
-        const link = `http://localhost:1337/reset-password/${user.id}/${token}\n\n`;
+        const link = `http://localhost:1337/api/auth/reset-password/${user.id}/${token}\n\n`;
         console.log("Password reset link has been sent to your email:", link);
+        sendEmail( user.email,
+          'Password Reset',
+          `You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\n` +
+          `Please click on the following link, or paste this into your browser to complete the process:\n\n` +
+        link  +
+          `If you did not request this, please ignore this email and your password will remain unchanged.\n`)
         res.send(link);
     } catch (error) {
         console.error(error);
