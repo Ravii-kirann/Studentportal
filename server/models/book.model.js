@@ -3,7 +3,6 @@ const User = require('./user.model');
 
 // Define the textbook schema
 const textbookSchema = new mongoose.Schema({
-    // Define textbook schema fields...
     title: {
         type: String,
         required: true
@@ -36,11 +35,7 @@ const textbookSchema = new mongoose.Schema({
 });
 
 const purchaseSchema = new mongoose.Schema({
-    studentId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Student', // Assuming 'Student' is an alias for 'User' in your application
-        required: true
-    },
+   
     textbooks: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Textbook'

@@ -47,17 +47,33 @@ const searchBook = async (req, res) => {
     }
 };
 
+
 const purchaseTextbook = async (req, res) => {
     try {
         console.log(req.body, "reqqqq"); 
-        const { userId, textbookId } = req.body;
+        const {  textbookId } = req.body;
 
         const book = await Textbook.findById(textbookId);
-        const price = book.totalAmount
         
+        console.log("book,,,,,,,,", book);
+       
+
+        const price = book.price;
+        console.log("priceeeeeeee", price);
+        for (const purchase of purchases) {
+            totalAmount += purchase.totalAmount;
+        }
+
+        // Calculate the discount
+        let discountApplied = false;
+        if (totalAmount + price > 200) {
+            price *= 0.9; // Apply 10% discount
+            discountApplied = true;
+        }
+
         const purchase = new Purchase({
-            studentId : userId,
-            textbookId,
+            
+            textbooks: [textbookId],
             purchaseDate: new Date(),
             totalAmount: price
         });
@@ -69,7 +85,9 @@ const purchaseTextbook = async (req, res) => {
         console.error('Error purchasing textbook:', error);
         res.status(500).json({ error: 'An error occurred while purchasing textbook' });
     }
-};
+}; 
+
+
 
 // Controller for retrieving purchase history
 const getPurchaseHistory = async (req, res) => {
