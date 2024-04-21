@@ -3,7 +3,6 @@ import Header from '../components/header';
 import { useNavigate } from 'react-router-dom';
 
 export default function People() {
-    const navigate = useNavigate();
     const [people, setPeople] = useState([]);
     const [search, setSearch] = useState('');
 
@@ -44,7 +43,8 @@ export default function People() {
             <button  onClick={() => {handleSearch()}}>Search</button>
         </div>
         <div id="searchResults" class="search-results">
-          <table class="result-table">
+          {people && people?.length >0
+          && <table class="result-table">
             <tr><th>Name</th><th>department</th><th>phone number</th><th>email</th></tr>
             {people && people?.map(item => (<tr>
               <td>{item?.firstName + ' ' + item?.lastName}</td>
@@ -52,7 +52,7 @@ export default function People() {
               <td>{item?.phoneNumber}</td>
               <td>{item?.email}</td>
             </tr>))}
-          </table>
+          </table>}
         </div>
     </div>
     <style>
