@@ -95,8 +95,8 @@ const purchaseTextbook = async (req, res) => {
 // Controller for retrieving purchase history
 const getUserPurchases = async (req, res) => {
     try {
-       const {userId} = res.body
-        const userPurchases = await Purchase.find(userId)
+        const { userId } = req.params; // Changed from req.body to req.params
+        const userPurchases = await Purchase.find({ userId })
             .populate('textbooks', 'name price');
 
         res.json(userPurchases);
