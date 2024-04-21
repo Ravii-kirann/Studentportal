@@ -52,8 +52,9 @@ const Login = async (req, res, next) => {
     }
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
    
-    res.cookie('access_token', token, { httpOnly: true, expiresIn: '30d' }).status(200).json(user);
-    res.send(user)
+    res.set('Authorization', `Bearer ${token}`); // Set token in the header
+    res.status(200).json({ user, token });
+   
   } catch (error) {
     console.error('Error logging in:', error);
     next(errorHandler(500, 'Failed to log in'));
@@ -86,9 +87,9 @@ const forgotPassword = async (req, res) => {
         const token = jwt.sign(payload, secret, { expiresIn: '15m' });
 
         // Construct the reset password link
-        const link = `http://localhost:1337/reset-password/${user._id}/${token}`;
+        const link = `http://localhost:1337/reset-password/${user.id}/${token}\n\n`;
         console.log("Password reset link has been sent to your email:", link);
-        res.send("Password reset link has been sent to your email");
+        res.send(link);
     } catch (error) {
         console.error(error);
         res.status(500).send("An error occurred");
