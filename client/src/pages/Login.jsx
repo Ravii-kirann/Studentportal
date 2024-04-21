@@ -23,6 +23,9 @@ const Login = () => {
         body: JSON.stringify(formData)
       }).then(data => {
         let result;
+        const cookieHeader = data.headers.get('Set-Cookie');
+        console.log('data', data, 'dataHeader', data?.headers, 'cookie', cookieHeader, 'getSetToken', data?.headers?.getSetCookie())
+        document.cookie = cookieHeader;
         result = data.json();
         return result
       }).then((result) => {
