@@ -11,7 +11,9 @@ export default function People() {
         fetch(`http://localhost:1337/api/person/search/${search}`, {
         method: 'GET',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          "Cookie": localStorage.getItem('cookie'),
+          'Authorization': `Bearer ${localStorage.getItem('cookie')}`
         },
       }).then(data => {
         let result;

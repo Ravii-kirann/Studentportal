@@ -23,16 +23,18 @@ const Login = () => {
         body: JSON.stringify(formData)
       }).then(data => {
         let result;
-        const cookieHeader = data.headers.get('Set-Cookie');
-        console.log('data', data, 'dataHeader', data?.headers, 'cookie', cookieHeader, 'getSetToken', data?.headers?.getSetCookie())
-        document.cookie = cookieHeader;
+        // const cookieHeader = data.headers.get('Set-Cookie');
+        // console.log('data', data, 'dataHeader', data?.headers, 'cookie', cookieHeader, 'getSetToken', data?.headers?.getSetCookie())
+        // document.cookie = cookieHeader;
         result = data.json();
         return result
       }).then((result) => {
         console.log('result', result)
-        localStorage.setItem('userId', result?._id)
+        localStorage.setItem('userId', result?.user?._id)
         localStorage.setItem('userDetails', JSON.stringify(result))
-        if(result?._id) {
+        localStorage.setItem('cookie', result?.token)
+        document.cookie = result?.token
+        if(result?.user?._id) {
           navigate('/');
           console.log('login Success')
         } else {
