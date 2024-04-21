@@ -3,7 +3,6 @@ import Header from '../components/header';
 import { useNavigate } from 'react-router-dom';
 
 export default function People() {
-    const navigate = useNavigate();
     const [people, setPeople] = useState([]);
     const [search, setSearch] = useState('');
 
@@ -12,7 +11,6 @@ export default function People() {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
-          "Cookie": localStorage.getItem('cookie'),
           'Authorization': `Bearer ${localStorage.getItem('cookie')}`
         },
       }).then(data => {
@@ -20,18 +18,18 @@ export default function People() {
             console.log('data', data)
             result = data.json();
             return result
-          }).then(result => {
-            console.log('result', result)
-            if (result === 'Signout success!') {
-               
-            } else {
-            console.log('result not ok', result)
-            alert('Something went wrong! try again after refresh');
-            } 
-          }).catch(err => {
-            console.log('err', err);
-            alert('Something went wrong! try again after refresh');
-          })
+        }).then(result => {
+          console.log('result', result)
+          if (result?.length > 0) {
+              setPeople(result)
+          } else {
+          console.log('result not ok', result)
+          alert('No student or faculty present in the data base with that query');
+          } 
+        }).catch(err => {
+          console.log('err', err);
+          alert('Something went wrong! try again after refresh');
+        })
     }
   return (
     <>
@@ -45,6 +43,16 @@ export default function People() {
             <button  onClick={() => {handleSearch()}}>Search</button>
         </div>
         <div id="searchResults" class="search-results">
+          {people && people?.length >0
+          && <table class="result-table">
+            <tr><th>Name</th><th>department</th><th>phone number</th><th>email</th></tr>
+            {people && people?.map(item => (<tr>
+              <td>{item?.firstName + ' ' + item?.lastName}</td>
+              <td>{item?.department}</td>
+              <td>{item?.phoneNumber}</td>
+              <td>{item?.email}</td>
+            </tr>))}
+          </table>}
         </div>
     </div>
     <style>
@@ -82,20 +90,27 @@ export default function People() {
             background-color: #007bff;
             color: #fff;
             cursor: pointer;
+            margin-left: 2rem
         }
-        
         .search-results {
             margin-top: 20px;
         }
-        
         .result {
             padding: 10px;
             border-bottom: 1px solid #ccc;
         }
-        
         .result:last-child {
             border-bottom: none;
         }
+        .result-table th, .result-table td {
+          padding: 10px;
+          border: 1px solid #ddd;
+          text-align: left;
+      }
+      
+      .result-table th {
+          background-color: #f2f2f2;
+      }
         `}
     </style>
     </>
