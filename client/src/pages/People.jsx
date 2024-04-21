@@ -43,7 +43,7 @@ export default function People() {
         </div>
         <div id="searchResults" class="search-results">
           {people && people?.length >0
-          && <table class="result-table">
+          && <table class="result-table" style={{margin: '0px auto'}}>
             <tr><th>Name</th><th>department</th><th>phone number</th><th>email</th></tr>
             {people && people?.map(item => (<tr>
               <td>{item?.firstName + ' ' + item?.lastName}</td>

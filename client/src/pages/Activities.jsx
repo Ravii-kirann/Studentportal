@@ -64,7 +64,7 @@ export default function Activities() {
             <button onClick={() => {HandleSubmit()}}>Search</button>
         </div>
         {activities && activities?.length >0
-          && <table class="result-table">
+          && <table class="result-table"  style={{margin: '0px auto'}}>
             <tr><th>name</th><th>description</th><th>date</th></tr>
             {activities && activities?.map((item, index) => (<tr key={index}>
                 {console.log(item)}

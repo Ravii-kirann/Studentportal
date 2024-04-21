@@ -2,34 +2,46 @@ import React, { useState } from 'react'
 import Header from '../components/header'
 
 export default function Roomates() {
-        const [details, setDetails] = useState({gender: 'male', approxPrice: 0, moveInDate: ''});
-        const [roomMates, setRoomMates] = useState([]);
+    const [details, setDetails] = useState({gender: 'male', approxPrice: 0, moveInDate: ''});
+    const [roomMates, setRoomMates] = useState([]);
 
-        const searchRoommate = () => {
-            fetch(`http://localhost:1337/api/findMyroom/search?gender=${details?.gender}&moveInDate=${details?.moveInDate}&approxPrice=${details?.approxPrice}`, {
-                method: 'GET',
-                headers: {
-                  'Content-Type': 'application/json',
-                  'Authorization': `Bearer ${localStorage.getItem('cookie')}`
-                },
-              }).then(data => {
-                let result;
-                    console.log('data', data)
-                    result = data.json();
-                    return result
-                }).then(result => {
-                  console.log('result', result)
-                  if (result?.length > 0) {
-                    setRoomMates(result)
-                  } else {
-                  console.log('result not ok', result)
-                  alert('No one is avaliable at these dates and prices');
-                  } 
-                }).catch(err => {
-                  console.log('err', err);
-                  alert('Something went wrong! try again after refresh');
-                })
-        }
+    const searchRoommate = () => {
+        fetch(`http://localhost:1337/api/findMyroom/search?gender=${details?.gender}&moveInDate=${details?.moveInDate}&approxPrice=${details?.approxPrice}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('cookie')}`
+            },
+            }).then(data => {
+            let result;
+                console.log('data', data)
+                result = data.json();
+                return result
+            }).then(result => {
+                console.log('result', result)
+                if (result?.length > 0) {
+                setRoomMates(result)
+                } else {
+                console.log('result not ok', result)
+                alert('No one is avaliable at these dates and prices');
+                } 
+            }).catch(err => {
+                console.log('err', err);
+                alert('Something went wrong! try again after refresh');
+            })
+    }
+    const DateFormater = (dateString) => {
+        const date = new Date(dateString);
+        const month = date.getMonth() + 1; 
+        const day = date.getDate();
+        const year = date.getFullYear();
+        const formattedMonth = month < 10 ? `0${month}` : month;
+        const formattedDay = day < 10 ? `0${day}` : day;
+
+        const formattedDate = `${formattedMonth}/${formattedDay}/${year}`;
+        console.log('dateString', dateString, 'formattedDate', formattedDate)
+        return formattedDate || 'N/A';
+    }
   return (
     <>
     <Header />
@@ -47,8 +59,17 @@ export default function Roomates() {
             <input type="number" id="price" placeholder="Enter price" value={details?.approxPrice} min="0" onChange={(e) => {setDetails(prev => ({ ...prev, approxPrice:e.target?.value}))}} />
             <button onClick={() => {searchRoommate()}}>Search</button>
         </div>
-        <div id="searchResults" class="search-results">
-        </div>
+        {roomMates && roomMates?.length >0
+          && <table class="result-table" style={{margin: '0px auto'}}>
+            <tr><th>name</th><th>gender</th><th>moveInDate</th><th>priceRange</th></tr>
+            {roomMates && roomMates?.map((item, index) => (<tr key={index}>
+                {console.log(item)}
+              <td>{item?.name}</td>
+              <td>{item?.gender}</td>
+              <td>{item?.priceRange?.min + '-' + item?.priceRange?.max}</td>
+              <td>{DateFormater(item?.moveInDate)}</td>
+            </tr>))}
+          </table>}
     </div>
         <style>
             {`
@@ -97,6 +118,18 @@ export default function Roomates() {
             .search-results {
                 margin-top: 20px;
             }
+            .result:last-child {
+                border-bottom: none;
+            }
+            .result-table th, .result-table td {
+              padding: 10px;
+              border: 1px solid #ddd;
+              text-align: left;
+          }
+          
+          .result-table th {
+              background-color: #f2f2f2;
+          }
             `}
         </style>
     </>
