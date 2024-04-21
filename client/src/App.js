@@ -11,7 +11,9 @@ import Meals from './pages/Meals';
 import BusTicket from './pages/BusTicket';
 import Activities from './pages/Activities';
 import Elections from './pages/Elections';
-import AuthComponent from './components/AuthContainer'
+import ForgotPassword from './pages/ForgotPassword';
+import ResetPassword from './pages/ResetPassword';
+// import AuthComponent from './components/AuthContainer'
 function App() {
   return (
     <Router>
@@ -28,6 +30,8 @@ function App() {
         <Route path='/activities' element={<Activities />} />
         <Route path='/elections' element={<Elections />} />
         <Route path='/updateInfo' element={<Register />} />
+        <Route path='/forgotPassword' element={<ForgotPassword />} />
+        <Route path='/resetPassword' element={<ResetPassword />} />
       </Routes>
     </Router>
   );

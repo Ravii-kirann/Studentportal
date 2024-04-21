@@ -1,12 +1,10 @@
 import React, {useState} from 'react'
 import Header from '../components/header'
-import { useNavigate } from 'react-router-dom';
 
 export default function Elections() {
     const [selected, setSelected] = useState('');
     const [winner, setWinner] = useState('')
     const users = ['John', 'Mary', 'Susan']
-    let navigate = useNavigate();
 
     const handleChange = (e) => {
         console.log('e', e.target.value, e.target.checked)

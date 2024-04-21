@@ -95,7 +95,7 @@ const forgotPassword = async (req, res) => {
           `Please click on the following link, or paste this into your browser to complete the process:\n\n` +
         link  +
           `If you did not request this, please ignore this email and your password will remain unchanged.\n`)
-        res.send(link);
+        res.send(JSON.stringify({link}));
     } catch (error) {
         console.error(error);
         res.status(500).send("An error occurred");
@@ -134,7 +134,7 @@ const resetPassword = async (req, res) => {
         user.password = password;
         await user.save();
 
-        res.send("Password reset successfully");
+        res.send(JSON.stringify({result: "Password reset successfully"}));
     } catch (error) {
         console.error(error);
         res.status(500).send("An error occurred");

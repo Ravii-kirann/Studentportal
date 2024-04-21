@@ -99,7 +99,7 @@ function Register() {
 
   return (
   <>
-  <Header />
+  {!isReg && <Header />}
   <div class="container">
         <h2>Registration</h2>
         <form id="registration-form" onSubmit={handleSubmit}>

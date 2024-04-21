@@ -47,7 +47,7 @@ const Login = () => {
   };
 
   return (<>
-  <Header />
+  {/* <Header /> */}
     <div className={styles.container}>
         <h2 className={styles.h2}>Login</h2>
         <div id="login-form">
@@ -62,6 +62,7 @@ const Login = () => {
             <button className={styles.button} type="submit" onClick={handleSubmit}>Login</button>
         </div>
         <p>Don't have an account? <Link to="/register">Register here</Link></p>
+        <p>Forgot Password? <Link to="/forgotPassword">Click here</Link></p>
     </div>
     </>);
 };
