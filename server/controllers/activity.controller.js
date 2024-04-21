@@ -2,25 +2,25 @@ const Activity = require("../models/activity.model");
 
 const activitySelected = async (req, res) => {
     try {
-        const { startDate, endDate } = req.query;
+        const { startDate, endDate } = req.params;
         console.log("Received request with start date:", startDate, "and end date:", endDate);
 
-        
-        const formattedStartDate = new Date(startDate).toISOString();
-        const formattedEndDate = new Date(endDate).toISOString();
+        // Ensure dates are in ISO format
+        const formattedStartDate = new Date(startDate);
+        const formattedEndDate = new Date(endDate);
         console.log("Parsed start date:", formattedStartDate, "Parsed end date:", formattedEndDate);
 
-       
+        // Query the database for activities within the specified period
         const activities = await Activity.find({
-          
             date: {
-                $gte: new Date(formattedStartDate),
-                $lte: new Date(formattedEndDate)
-            }
-        })
+                $gte: formattedStartDate,
+                $lte: formattedEndDate
+            },
+            name: { $exists: true, $ne: null } // Ensure that 'name' is not null or undefined
+        }).select('name date description'); // Selecting only the required fields
         console.log("Retrieved activities:", activities);
 
-      
+        // Group activities by month
         const activitiesByMonth = {};
         activities.forEach(activity => {
             const monthYear = `${activity.date.toISOString().slice(5, 7)}-${activity.date.toISOString().slice(0, 4)}`;
@@ -60,4 +60,7 @@ const createActivity = async (req, res) => {
         res.status(500).json({ error: 'An error occurred while creating activity' });
     }
 }
-module.exports = {activitySelected,createActivity};
+const test =(req,res)=>{
+   res.send("working")
+}
+module.exports = {activitySelected,createActivity,test};
