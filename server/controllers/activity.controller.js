@@ -2,7 +2,7 @@ const Activity = require("../models/activity.model");
 
 const activitySelected = async (req, res) => {
     try {
-        const { startDate, endDate } = req.body;
+        const { startDate, endDate } = req.params;
         console.log("Received request with start date:", startDate, "and end date:", endDate);
 
         // Extract date part as string and convert to ISO format

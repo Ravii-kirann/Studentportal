@@ -4,7 +4,7 @@ const verifyToken = require('../utils/verifyUser')
 const {activitySelected,createActivity} = require('../controllers/activity.controller')
 
 
-router.post('/',verifyToken,activitySelected);
+router.post('/:startDate/:endDate',verifyToken,activitySelected);
 router.post('/',createActivity)
 
 module.exports = router;
