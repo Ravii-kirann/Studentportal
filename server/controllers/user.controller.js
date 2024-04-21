@@ -14,14 +14,14 @@ const test = async (req,res)=>{
 const updateUser = async (req, res, next) => {
   console.log(req.body, "update User");
   try {
-    // Ensure that the user is updating their own account
+    
     if (req.user.id !== req.params.id) {
       return next(errorHandler(401, 'You can update only your account!'));
     }
 
     // Check if password field exists and hash it if provided
     if (req.body.password) {
-      req.body.password = bcryptjs.hashSync(req.body.password, 10);
+      req.body.password = bcrypt.hashSync(req.body.password, 10);
     }
 
     // Construct update object with provided fields

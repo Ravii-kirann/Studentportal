@@ -13,7 +13,7 @@ const test = (req, res) => {
 const Register = async (req, res, next) => {
   console.log(req.body,"req.body")
   try {
-    const { password, confirmPassword } = req.body;
+    const { password, confirmPassword } = req.params;
 
     // Check if passwords match
     if (password !== confirmPassword) {
