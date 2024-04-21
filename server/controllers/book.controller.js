@@ -1,7 +1,6 @@
 
-const mongoose = require('mongoose');
-const { Textbook, Purchase, Student } = require('../models/book.model');
-
+const  Textbook  = require('../models/book.model');
+const Purchase = require('../models/purchase.model');
 const createBook = async (req, res) => {
     try {
         const { title, author, isbn, availability, libraryLocation, bookstoreName, price } = req.body;
@@ -50,58 +49,61 @@ const searchBook = async (req, res) => {
 
 const purchaseTextbook = async (req, res) => {
     try {
-        console.log(req.body, "reqqqq"); 
-        const {  textbookId } = req.body;
-
-        const book = await Textbook.findById(textbookId);
+        const { textbookID,UserId } = req.body;
+       console.log("req.body",textbookID,UserId)
+     
+        let totalPrice = 0;
+    
+            const textbook = await Textbook.findById(textbookID);
+            console.log(textbook)
+            if (!textbook) {
+                return res.status(404).json({ error: `Textbook with ID ${textbookID} not found` });
+            }
+            totalPrice += textbook.price;
         
-        console.log("book,,,,,,,,", book);
-       
 
-        const price = book.price;
-        console.log("priceeeeeeee", price);
-        for (const purchase of purchases) {
-            totalAmount += purchase.totalAmount;
-        }
-
-        // Calculate the discount
+    
+        const userPurchases = await Purchase.find({UserId });
         let discountApplied = false;
-        if (totalAmount + price > 200) {
-            price *= 0.9; // Apply 10% discount
-            discountApplied = true;
+        let totalPurchaseAmount = 0;
+        for (const purchase of userPurchases) {
+            totalPurchaseAmount += purchase.totalPrice;
         }
-
+        if (totalPurchaseAmount > 200) {
+            discountApplied = true;
+            totalPrice *= 0.9; // 10% discount
+        }
+        const textbooks = textbook._id
+        // Create the purchase
         const purchase = new Purchase({
-            
-            textbooks: [textbookId],
-            purchaseDate: new Date(),
-            totalAmount: price
+            textbooks,
+            totalPrice,
+            discountApplied,
+            user: req.user.id
         });
-
         await purchase.save();
 
-        res.status(201).json({ message: 'Textbook purchased successfully' });
+        res.status(201).json(purchase);
     } catch (error) {
-        console.error('Error purchasing textbook:', error);
-        res.status(500).json({ error: 'An error occurred while purchasing textbook' });
+        console.error("Error occurred:", error);
+        res.status(500).json({ error: 'An error occurred while purchasing textbooks' });
     }
-}; 
+}
 
 
 
 // Controller for retrieving purchase history
-const getPurchaseHistory = async (req, res) => {
+const getUserPurchases = async (req, res) => {
     try {
-        const userId = req.params.userId;
+       const {userId} = res.body
+        const userPurchases = await Purchase.find(userId)
+            .populate('textbooks', 'name price');
 
-        // Retrieve purchase history for the specified user
-        const purchases = await Purchase.find({ userId }).populate('textbookId');
-
-        res.status(200).json(purchases);
+        res.json(userPurchases);
     } catch (error) {
-        console.error('Error retrieving purchase history:', error);
-        res.status(500).json({ error: 'An error occurred while retrieving purchase history' });
+        console.error("Error occurred:", error);
+        res.status(500).json({ error: 'An error occurred while retrieving purchases' });
     }
-};
+}
 
-module.exports = { createBook, searchBook, purchaseTextbook, getPurchaseHistory };
+module.exports = { createBook, searchBook, purchaseTextbook, getUserPurchases };
