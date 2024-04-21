@@ -48,6 +48,14 @@ export default function Header() {
                 </>}
         </div>
         <style>{`
+           ul{
+            width : 8rem
+           }
+           li{
+            padding : 5px 0
+           }
+          
+
         `}</style>
     </div>
   )
