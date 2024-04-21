@@ -1,7 +1,20 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import Header from '../components/header'
 
 export default function Meals() {
+    const [mealPurchased, setMealPurchased] = useState('');
+    useEffect(() => {
+        let mealPur = JSON.parse(localStorage.getItem('mealPurchased'));
+        if(mealPur && mealPur !== 0) {
+            setMealPurchased(mealPur)
+        } else {
+            localStorage.setItem('mealPurchased', JSON.stringify(''))
+        }
+    },[])
+    const purchaseMealPlan = (date) => {
+        setMealPurchased(date);
+        localStorage.setItem('mealPurchased', JSON.stringify(date))
+    }
   return (
     <>
     <Header />
@@ -11,13 +24,16 @@ export default function Meals() {
             <div class="plan">
                 <h2>Monthly Plan</h2>
                 <p>$600 per month</p>
-                <button onclick="purchaseMealPlan('monthly')">Purchase</button>
+                <button disabled={mealPurchased!==''} onClick={() => purchaseMealPlan('monthly')}>Purchase</button>
             </div>
             <div class="plan">
                 <h2>Semester Plan</h2>
-                <p>$1140 per semester</p>
-                <button onclick="purchaseMealPlan('semester')">Purchase</button>
+                <p>$3420 per semester (5% discount)</p>
+                <button disabled={mealPurchased!==''} onClick={() => purchaseMealPlan('semester')}>Purchase</button>
             </div>
+        </div>
+        <div>
+            {mealPurchased&&<h1>{`${mealPurchased} meal plan has been purchased`}</h1>}
         </div>
     </div>
     <style>

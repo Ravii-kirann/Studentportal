@@ -31,7 +31,7 @@ const Login = () => {
       }).then((result) => {
         console.log('result', result)
         localStorage.setItem('userId', result?.user?._id)
-        localStorage.setItem('userDetails', JSON.stringify(result))
+        localStorage.setItem('userDetails', JSON.stringify(result?.user))
         localStorage.setItem('cookie', result?.token)
         document.cookie = result?.token
         if(result?.user?._id) {

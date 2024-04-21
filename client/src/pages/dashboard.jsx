@@ -42,7 +42,7 @@ const Dashboard = () => {
         <section className={styles.section}>
             <h2 className={styles.sectionH2} >Meal Plan</h2>
             <p className={styles.sectionP} >Purchase a meal plan online by month or semester with credit card.</p>
-            <button className={styles.btn}>Purchase Meal Plan</button>
+            <button onClick={()=> navigate('/meals')} className={styles.btn}>Purchase Meal Plan</button>
         </section>
         
         <section className={styles.section}>

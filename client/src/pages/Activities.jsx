@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react'
+import React, {useState} from 'react'
 import Header from '../components/header'
 
 export default function Activities() {
@@ -10,13 +10,25 @@ export default function Activities() {
         setDates(prev => ({...prev, [names]: e?.target?.value}))
     };
 
+    const DateFormater = (dateString) => {
+        const date = new Date(dateString);
+        const month = date.getMonth() + 1; 
+        const day = date.getDate();
+        const year = date.getFullYear();
+        const formattedMonth = month < 10 ? `0${month}` : month;
+        const formattedDay = day < 10 ? `0${day}` : day;
+
+        const formattedDate = `${formattedMonth}/${formattedDay}/${year}`;
+        return formattedDate || 'N/A';
+    }
+
     const HandleSubmit = () => {
-        fetch(`http://localhost:1337/api/activities/`, {
+        fetch(`http://localhost:1337/api/activities/${dates?.startDate}/${dates?.endDate}`, {
             method: 'GET',
             headers: {
-              'Content-Type': 'application/json'
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${localStorage.getItem('cookie')}`
             },
-            body: JSON.stringify(dates)
             }).then(data => {
                 let result;
                 console.log('data', data)
@@ -24,11 +36,13 @@ export default function Activities() {
                 return result
               }).then(result => {
                 console.log('result', result)
-                if (result === 'Signout success!') {
-                   
+                if (result && Object.keys(result)?.length > 0) {
+                let tempResult = Object.values(result);
+                console.log('tempResult', tempResult);
+                setActivities(...tempResult)
                 } else {
                 console.log('result not ok', result)
-                alert('Something went wrong! try again after refresh');
+                alert('There are no activities during between these dates');
                 } 
               }).catch(err => {
                 console.log('err', err);
@@ -49,8 +63,16 @@ export default function Activities() {
             <input type="date" id="endDate" onChange={(e) => {taskChange(e, 'endDate')}}/>
             <button onClick={() => {HandleSubmit()}}>Search</button>
         </div>
-        <div class="activities">
-        </div>
+        {activities && activities?.length >0
+          && <table class="result-table">
+            <tr><th>name</th><th>description</th><th>date</th></tr>
+            {activities && activities?.map((item, index) => (<tr key={index}>
+                {console.log(item)}
+              <td>{item?.name}</td>
+              <td>{item?.description}</td>
+              <td>{DateFormater(item?.date)}</td>
+            </tr>))}
+          </table>}
     </div>
     <style>
         {`
@@ -104,6 +126,18 @@ export default function Activities() {
             color: #fff;
             cursor: pointer;
         }
+        .result:last-child {
+            border-bottom: none;
+        }
+        .result-table th, .result-table td {
+          padding: 10px;
+          border: 1px solid #ddd;
+          text-align: left;
+      }
+      
+      .result-table th {
+          background-color: #f2f2f2;
+      }
         `}
     </style>
     </>

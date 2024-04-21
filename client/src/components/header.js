@@ -42,8 +42,7 @@ export default function Header() {
             </div>
                 {view &&<>
                     <ul className="dropdown-menu" style={{position:"absolute",top:"100%",left:"-40px",width: '10rem', backgroundColor:"#ffffff",border:"1px solid #cccccc",padding:"8px",listStyleType:"none"}}>
-                        <li style={{cursor: 'pointer' }} key={1} onClick={() => navigate('/register')}>{'Update Info'}</li>
-                        <li style={{cursor: 'pointer' }} key={2} onClick={() => navigate('changePassword')}>{'Change Password'}</li>
+                        <li style={{cursor: 'pointer' }} key={1} onClick={() => navigate('/updateInfo')}>{'Update Info'}</li>
                         <li style={{cursor: 'pointer' }} key={3} onClick={() => handleLogout()}>{'Logout'}</li>
                     </ul>
                 </>}

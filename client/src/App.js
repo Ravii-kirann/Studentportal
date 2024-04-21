@@ -27,6 +27,7 @@ function App() {
         <Route path='/bustickets' element={<BusTicket />} />
         <Route path='/activities' element={<Activities />} />
         <Route path='/elections' element={<Elections />} />
+        <Route path='/updateInfo' element={<Register />} />
       </Routes>
     </Router>
   );
