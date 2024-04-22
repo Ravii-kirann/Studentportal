@@ -52,7 +52,7 @@ const Login = () => {
         <h2 className={styles.h2}>Login</h2>
         <div id="login-form">
             <div className={styles.formGroup}>
-                <label className={styles.lable} for="loginName">Login Name:</label>
+                <label className={styles.lable} for="loginName">User Name:</label>
                 <input className={styles.input} type="text" id="loginName" name="loginName" required  value={formData.loginName} onChange={(e)=>handleChange(e, 'loginName')}/>
             </div>
             <div className={styles.formGroup}>

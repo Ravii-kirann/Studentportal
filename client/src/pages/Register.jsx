@@ -80,6 +80,7 @@ function Register() {
         let result;
         result = data.json();
         console.log('data', data);
+        alert("Registration Successful !!!")
         return result
       }).then((result) => {
         console.log('result', result)
@@ -132,7 +133,7 @@ function Register() {
                 <input type="email" id="email" name="email" required={isReg } value={formData?.email} onChange={(e) => handleChange(e, 'email')}/>
             </div>
             <div class="form-group">
-                <label for="loginName">Login Name:</label>
+                <label for="loginName">User Name:</label>
                 <input type="text" id="loginName" name="loginName" required={isReg  } value={formData?.loginName} onChange={(e) => handleChange(e, 'loginName')}/>
             </div>
             <div class="form-group">

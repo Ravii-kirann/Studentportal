@@ -34,7 +34,7 @@ export default function Header() {
   return (
     <div style={{display: 'flex', width: '90%', margin:'1rem 5%', justifyContent: 'space-between', alignItems: 'center' }}>
         <Link to={'/'} style={{ textDecoration: 'none'}}>
-            <h1 style={{color: 'black', fontWeight: '600', fontSize: '3rem', textDecoration: 'none', lineHeight: '0' }}>S L</h1>
+            <h1 style={{color: 'black', fontWeight: '600', fontSize: '3rem', textDecoration: 'none', lineHeight: '0' }}onClick={() => navigate('/')}>Student Portal</h1>
         </Link>
         <div style={{ position: 'relative' }}>
             <div onClick={() => setView(prev => !prev)}>
