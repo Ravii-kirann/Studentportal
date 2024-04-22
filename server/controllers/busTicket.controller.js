@@ -7,11 +7,11 @@ const purchaseTickets = async (req, res) => {
 
         // Calculate total amount for tickets based on selected zones and quantity
         let ticketAmount = 0;
-        zones.forEach(zone => {
+        zone => {
             if (zone === 'Zone-1') ticketAmount += 2;
             else if (zone === 'Zone-2') ticketAmount += 4;
             else if (zone === 'Zone-3') ticketAmount += 6;
-        });
+        }
         ticketAmount *= quantity;
 
         // Create a new ticket purchase record
