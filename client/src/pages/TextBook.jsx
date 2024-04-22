@@ -1,7 +1,9 @@
 import React, {useState} from 'react'
 import Header from '../components/header'
+import { useNavigate } from 'react-router-dom';
 
 export default function TextBook() {
+  const navigate = useNavigate();
     const [query, setQuery] = useState('');
     const [books, setBooks] = useState([]);
 
@@ -33,40 +35,7 @@ export default function TextBook() {
 
     const buyBook = (item) => {
         console.log('item', item)
-        let totalBooks = localStorage.getItem('books')
-        if (!totalBooks) {
-            localStorage.setItem('books', JSON.stringify([]))
-        }
-        fetch(`http://localhost:1337/api/book/textbooks/purchase`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${localStorage.getItem('cookie')}`
-            },
-            body:JSON.stringify({
-                UserId: localStorage.getItem('userId'),
-                textbookID: item?._id
-            })
-            }).then(data => {
-                let result;
-                console.log('data', data)
-                result = data.json();
-                return result
-              }).then(result => {
-                console.log('result', result)
-                if (result) {
-                    localStorage.setItem('books', JSON.stringify([ ...(totalBooks||[]), result]))
-                    if(result?.discountApplied) {
-                        alert('10% discount is available in the next purchase')
-                    }
-                } else {
-                console.log('result not ok', result)
-                alert('Something went wrong while buying this book, please try again');
-                } 
-              }).catch(err => {
-                console.log('err', err);
-                alert('Something went wrong! try again after refresh');
-              })
+        navigate(`/card/${item?._id}`)
     }
   return (
     <>

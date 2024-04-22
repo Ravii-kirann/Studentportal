@@ -1,6 +1,51 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom';
 
 export default function Card() {
+    const navigate = useNavigate();
+    const [cardDetails, setCardDetails] = useState({cardNumber:'', expirationDate: '', cvv:''});
+    const [id, setId] = useState('');
+    useEffect(() => {
+        setId(window.location.pathname.split("/")?.[2])
+    },[])
+    const handleSubmit = () => {
+        let totalBooks = localStorage.getItem('books')
+        if (!totalBooks) {
+            localStorage.setItem('books', JSON.stringify([]))
+        }
+        fetch(`http://localhost:1337/api/book/textbooks/purchase`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${localStorage.getItem('cookie')}`
+            },
+            body:JSON.stringify({
+                UserId: localStorage.getItem('userId'),
+                textbookID: id
+            })
+            }).then(data => {
+                let result;
+                console.log('data', data)
+                result = data.json();
+                return result
+              }).then(result => {
+                console.log('result', result)
+                if (result) {
+                    localStorage.setItem('books', JSON.stringify([ ...(totalBooks||[]), result]))
+                    alert('Purchase successfull')
+                    if(result?.discountApplied) {
+                        alert('10% discount is available in the next purchase')
+                    }
+                    navigate('/textbooks')
+                } else {
+                console.log('result not ok', result)
+                alert('Something went wrong while buying this book, please try again');
+                } 
+              }).catch(err => {
+                console.log('err', err);
+                alert('Something went wrong! try again after refresh');
+              })
+    }
   return (
     <>
         <div class="container">
@@ -10,17 +55,17 @@ export default function Card() {
             <div id="paymentForm">
                 <div class="form-group">
                 <label for="cardNumber">Card Number:</label>
-                <input type="text" id="cardNumber" placeholder="1234 5678 9012 3456" required />
+                <input type="text" id="cardNumber" placeholder="1234 5678 9012 3456" required value={cardDetails?.cardNumber} onChange={(e) => {setCardDetails(prev => ({...prev, cardNumber: e.target?.value}))}}/>
                 </div>
                 <div class="form-group">
                 <label for="expirationDate">Expiration Date:</label>
-                <input type="text" id="expirationDate" placeholder="MM/YY" required />
+                <input type="text" id="expirationDate" placeholder="MM/YY" required value={cardDetails?.expirationDate} onChange={(e) => {setCardDetails(prev => ({...prev, expirationDate: e.target?.value}))}}/>
                 </div>
                 <div class="form-group">
                 <label for="cvv">CVV:</label>
-                <input type="text" id="cvv" placeholder="123" required />
+                <input type="text" id="cvv" placeholder="123" required value={cardDetails?.cvv} onChange={(e) => {setCardDetails(prev => ({...prev, cvv: e.target?.value}))}}/>
                 </div>
-                <button type="submit">Pay Now</button>
+                <button onClick={() => handleSubmit()}>Pay Now</button>
             </div>
             </div>
         </div>
