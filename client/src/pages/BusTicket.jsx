@@ -23,16 +23,58 @@ export default function BusTicket() {
     },[])
 
     const purchaseZoneTickets = () => {
-        localStorage.setItem('zoneTickets', JSON.stringify({zone1 : Number(totalZoneTickets?.zone1) + Number(zoneTickets?.zone1),
-            zone2: Number(totalZoneTickets?.zone2) + Number(zoneTickets?.zone2), zone3: Number(totalZoneTickets?.zone3) + Number(zoneTickets?.zone3) }))
-        setTotalZoneTickets(prev => ({zone1 : Number(prev?.zone1) + Number(zoneTickets?.zone1),
-        zone2: Number(prev?.zone2) + Number(zoneTickets?.zone2), zone3: Number(prev?.zone3) + Number(zoneTickets?.zone3) }));
-        setZoneTickets({zone1: '0', zone2: '0', zone3: '0'});
+    fetch('http://localhost:1337/api/busTicket/tickets', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('cookie')}`
+        },
+        body:JSON.stringify({
+            zones: ["Zone-1", "Zone-2", "Zone-3"],
+            quantity: Number(zoneTickets?.zone1) + Number(zoneTickets?.zone2) + Number(zoneTickets?.zone3)
+        })
+        }).then(data => {
+            let result;
+            console.log('data', data)
+            result = data.json();
+            return result
+            }).then(result => {
+            console.log('result', result)
+            localStorage.setItem('zoneTickets', JSON.stringify({zone1 : Number(totalZoneTickets?.zone1) + Number(zoneTickets?.zone1),
+                zone2: Number(totalZoneTickets?.zone2) + Number(zoneTickets?.zone2), zone3: Number(totalZoneTickets?.zone3) + Number(zoneTickets?.zone3) }))
+            setTotalZoneTickets(prev => ({zone1 : Number(prev?.zone1) + Number(zoneTickets?.zone1),
+            zone2: Number(prev?.zone2) + Number(zoneTickets?.zone2), zone3: Number(prev?.zone3) + Number(zoneTickets?.zone3) }));
+            setZoneTickets({zone1: '0', zone2: '0', zone3: '0'});
+            }).catch(err => {
+            console.log('err', err);
+            alert('Something went wrong! try again after refresh');
+            })
+    
     };
     const purchaseBusTicket = () => {
-        localStorage.setItem('busPass', JSON.stringify(Number(totalBusTicketNumber) + Number(busTicketNumber)))
-        setTotalBusTicketNumber(prev => (Number(prev) + Number(busTicketNumber)));
-        setBusTicketNumber(0);
+    fetch('http://localhost:1337/api/busTicket/bus-cards', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('cookie')}`
+        },
+        body:JSON.stringify({
+            quantity: busTicketNumber
+        })
+        }).then(data => {
+            let result;
+            console.log('data', data)
+            result = data.json();
+            return result
+            }).then(result => {
+            console.log('result', result)
+            localStorage.setItem('busPass', JSON.stringify(Number(totalBusTicketNumber) + Number(busTicketNumber)))
+            setTotalBusTicketNumber(prev => (Number(prev) + Number(busTicketNumber)));
+            setBusTicketNumber(0);
+            }).catch(err => {
+            console.log('err', err);
+            alert('Something went wrong! try again after refresh');
+            })
     }
     
   return (
@@ -65,7 +107,7 @@ export default function BusTicket() {
                 <input type="number" id="busCards" min="0" value={busTicketNumber} onChange={(e) => {setBusTicketNumber(e?.target?.value)}}/>
             </div>
             <button onClick={() => {purchaseBusTicket()}}>Purchase Bus Cards</button>
-            <table>
+            <table class="result-table" style={{margin: '0px auto'}}>
                 <tr><th>No of zone 1 tickets</th><th>No of zone 2 tickets</th><th>No of zone 3 tickets</th><th>No of Bus passes</th></tr>
                 <tr><td>{totalZoneTickets?.zone1}</td><td>{totalZoneTickets?.zone2}</td><td>{totalZoneTickets?.zone3}</td><td>{totalBusTicketNumber}</td></tr>
             </table>
@@ -121,6 +163,15 @@ export default function BusTicket() {
         }
         td {
             width: fit-content;
+        }
+        .result-table th, .result-table td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+        
+        .result-table th {
+            background-color: #f2f2f2;
         }
         `}
     </style>

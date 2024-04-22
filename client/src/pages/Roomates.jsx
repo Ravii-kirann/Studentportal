@@ -121,15 +121,15 @@ export default function Roomates() {
             .result:last-child {
                 border-bottom: none;
             }
-            .result-table th, .result-table td {
-              padding: 10px;
-              border: 1px solid #ddd;
-              text-align: left;
-          }
-          
-          .result-table th {
-              background-color: #f2f2f2;
-          }
+                .result-table th, .result-table td {
+                padding: 10px;
+                border: 1px solid #ddd;
+                text-align: left;
+            }
+            
+            .result-table th {
+                background-color: #f2f2f2;
+            }
             `}
         </style>
     </>

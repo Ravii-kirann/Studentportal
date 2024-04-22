@@ -13,6 +13,7 @@ import Activities from './pages/Activities';
 import Elections from './pages/Elections';
 import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
+import Card from './pages/Card';
 // import AuthComponent from './components/AuthContainer'
 function App() {
   return (
@@ -32,6 +33,7 @@ function App() {
         <Route path='/updateInfo' element={<Register />} />
         <Route path='/forgotPassword' element={<ForgotPassword />} />
         <Route path='/resetPassword' element={<ResetPassword />} />
+        <Route path={`/card/:id`} element={<Card />} />
       </Routes>
     </Router>
   );

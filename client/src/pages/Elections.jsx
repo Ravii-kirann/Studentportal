@@ -1,10 +1,83 @@
-import React, {useState} from 'react'
+import React, {useEffect, useState} from 'react'
 import Header from '../components/header'
+import CanvasJSReact from '@canvasjs/react-charts'
 
 export default function Elections() {
+    const CanvasJSChart = CanvasJSReact.CanvasJSChart;
     const [selected, setSelected] = useState('');
     const [winner, setWinner] = useState('')
-    const users = ['John', 'Mary', 'Susan']
+    const users = ['John', 'Mary', 'Susan'];
+    const [voteCast, setVoteCast] = useState(false);
+    const [resultVotes, setResultVotes] = useState({});
+    useEffect(() => {
+        if (voteCast) {
+            fetch('http://localhost:1337/api/vote/results', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                  'Authorization': `Bearer ${localStorage.getItem('cookie')}`
+                },
+                body:JSON.stringify({candidate:'John'})
+                }).then(data => {
+                    let result;
+                    console.log('data', data)
+                    result = data.json();
+                    return result
+                  }).then(result => {
+                    console.log('result', result)
+                    if (result) {
+                        setResultVotes(prev => ({...prev, John: result?.votes}))
+                    } 
+                  }).catch(err => {
+                    console.log('err', err);
+                    alert('Something went wrong! try again after refresh');
+                  })
+                  fetch('http://localhost:1337/api/vote/results', {
+                    method: 'POST',
+                    headers: {
+                      'Content-Type': 'application/json',
+                      'Authorization': `Bearer ${localStorage.getItem('cookie')}`
+                    },
+                    body:JSON.stringify({candidate:'Mary'})
+                    }).then(data => {
+                        let result;
+                        console.log('data', data)
+                        result = data.json();
+                        return result
+                      }).then(result => {
+                        console.log('result', result)
+                        if (result) {
+                            setResultVotes(prev => ({...prev, Mary: result?.votes}))
+                        }
+                      }).catch(err => {
+                        console.log('err', err);
+                        alert('Something went wrong! try again after refresh');
+                      })
+                      fetch('http://localhost:1337/api/vote/results', {
+                        method: 'POST',
+                        headers: {
+                          'Content-Type': 'application/json',
+                          'Authorization': `Bearer ${localStorage.getItem('cookie')}`
+                        },
+                        body:JSON.stringify({candidate:'Susan'})
+                        }).then(data => {
+                            let result;
+                            console.log('data', data)
+                            result = data.json();
+                            return result
+                          }).then(result => {
+                            console.log('result', result)
+                            if (result) {
+                                setResultVotes(prev => ({...prev, Susan: result?.votes}))
+                            }
+                          }).catch(err => {
+                            console.log('err', err);
+                            alert('Something went wrong! try again after refresh');
+                          })
+        }
+    },[voteCast])
+
+    useEffect(() => {},[])
 
     const handleChange = (e) => {
         console.log('e', e.target.value, e.target.checked)
@@ -13,6 +86,10 @@ export default function Elections() {
         }
     };
     const handleVoteSubmit = () => {
+        if(voteCast) {
+            alert('Vote has already been cast by you!');
+            return;
+        }
         fetch('http://localhost:1337/api/vote/', {
           method: 'POST',
           headers: {
@@ -28,6 +105,7 @@ export default function Elections() {
           console.log('result', result)
           if(result?.message === "Vote recorded successfully") {
             console.log('Register Success')
+            setVoteCast(true)
             setWinner(users[Math.floor(Math.random()*3)])
           } else {
             alert('Something Went wrong! retry after refresh');
@@ -58,6 +136,20 @@ export default function Elections() {
             <div class="results">
                 <h2>Results: {winner ? winner : ''}</h2>
                 <div id="resultsChart" class="chart">
+                {voteCast&& Object.keys(resultVotes)?.length === 3 && <CanvasJSChart options = {{
+                            title: {
+                                text: "Basic Column Chart in React"
+                            },
+                            data: [{
+                                type: "column",
+                                dataPoints: [
+                                { label: "John",  y: resultVotes?.John ?? '4'  },
+                                { label: "Mary", y: resultVotes?.Mary ?? '11' },
+                                { label: "Susan", y: resultVotes?.Susan ?? '14'  },
+                                ]
+                            }]
+                            }}
+                    />}
                 </div>
             </div>
         </div>
