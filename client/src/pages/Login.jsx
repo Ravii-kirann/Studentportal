@@ -48,6 +48,7 @@ const Login = () => {
 
   return (<>
   {/* <Header /> */}
+  <Header />
     <div className={styles.container}>
         <h2 className={styles.h2}>Login</h2>
         <div id="login-form">
