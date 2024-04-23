@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import Header from '../components/header'
+import { useNavigate } from 'react-router-dom';
 
 export default function Meals() {
+    const navigate = useNavigate (); 
     const [mealPurchased, setMealPurchased] = useState('');
     useEffect(() => {
         let mealPur = JSON.parse(localStorage.getItem('mealPurchased'));
@@ -14,7 +16,9 @@ export default function Meals() {
     const purchaseMealPlan = (date) => {
         setMealPurchased(date);
         localStorage.setItem('mealPurchased', JSON.stringify(date))
+        navigate(`/card`)
     }
+
   return (
     <>
     <Header />
@@ -29,7 +33,13 @@ export default function Meals() {
             <div class="plan">
                 <h2>Semester Plan</h2>
                 <p>$3420 per semester (5% discount)</p>
-                <button disabled={mealPurchased!==''} onClick={() => purchaseMealPlan('semester')}>Purchase</button>
+                <button disabled={mealPurchased!==''} onClick={() =>{
+                        purchaseMealPlan('semester')
+
+                }
+                    
+                
+                    }>Purchase</button>
             </div>
         </div>
         <div>

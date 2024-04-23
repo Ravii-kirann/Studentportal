@@ -14,7 +14,6 @@ const test = async (req,res)=>{
 const updateUser = async (req, res, next) => {
   console.log(req.body, "update User");
   try {
-    
     if (req.user.id !== req.params.id) {
       return next(errorHandler(401, 'You can update only your account!'));
     }
@@ -40,7 +39,7 @@ const updateUser = async (req, res, next) => {
     // Update the user in the database
     const updatedUser = await User.findByIdAndUpdate(
       req.params.id,
-      { $set: updateFields },
+      updateFields, // Removed $set
       { new: true }
     );
 
@@ -55,7 +54,6 @@ const updateUser = async (req, res, next) => {
     next(error);
   }
 };
-
 
 
 // delete user
