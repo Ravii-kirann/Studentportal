@@ -134,7 +134,7 @@ export default function Elections() {
                 </div>
             </div>
             <div class="results">
-                <h2>Results: {winner ? winner : ''}</h2>
+                <h2>Results: </h2>
                 <div id="resultsChart" class="chart">
                 {voteCast&& Object.keys(resultVotes)?.length === 3 && <CanvasJSChart options = {{
                             title: {
