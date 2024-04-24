@@ -87,14 +87,14 @@ const forgotPassword = async (req, res) => {
         const token = jwt.sign(payload, secret, { expiresIn: '30m' });
 
         // Construct the reset password link
-        const link = `http://localhost:1337/api/auth/reset-password/${user.id}/${token}\n\n`;
+        const link = `http://localhost:1337/api/auth/reset-password/${user.id}/${token}`;
         console.log("Password reset link has been sent to your email:", link);
-        sendEmail( user.email,
-          'Password Reset',
-          `You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\n` +
-          `Please click on the following link, or paste this into your browser to complete the process:\n\n` +
-        link  +
-          `If you did not request this, please ignore this email and your password will remain unchanged.\n`)
+        // sendEmail( user.email,
+        //   'Password Reset',
+        //   `You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\n` +
+        //   `Please click on the following link, or paste this into your browser to complete the process:\n\n` +
+        // link  +
+        //   `If you did not request this, please ignore this email and your password will remain unchanged.\n`)
         res.send(JSON.stringify({link}));
     } catch (error) {
         console.error(error);
@@ -129,10 +129,17 @@ const resetPassword = async (req, res) => {
         if (payload.id !== id) {
             return res.status(400).send("Invalid or expired password reset link");
         }
+        const salt = await bcrypt.genSalt(10);
+    // Check if passwords match
+    if (password !== confirmPassword) {
+      return res.status(400).json({ error: 'Passwords do not match' });
+    }
 
+    const hashedPassword = await bcrypt.hash(password, salt); // Changed to async method
         // Update user's password
-        user.password = password;
+        user.password = hashedPassword;
         await user.save();
+        console.log("updated User",user)
 
         res.send(JSON.stringify({result: "Password reset successfully"}));
     } catch (error) {

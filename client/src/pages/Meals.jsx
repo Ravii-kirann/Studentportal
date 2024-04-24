@@ -16,7 +16,7 @@ export default function Meals() {
     const purchaseMealPlan = (date) => {
         setMealPurchased(date);
         localStorage.setItem('mealPurchased', JSON.stringify(date))
-        navigate(`/card`)
+        
     }
 
   return (

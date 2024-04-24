@@ -17,7 +17,9 @@ const updateUser = async (req, res, next) => {
     if (req.user.id !== req.params.id) {
       return next(errorHandler(401, 'You can update only your account!'));
     }
-
+    const password  = req.body.formData.password
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
     // Check if password field exists and hash it if provided
     if (req.body.password) {
       req.body.password = bcrypt.hashSync(req.body.password, 10);
@@ -25,15 +27,15 @@ const updateUser = async (req, res, next) => {
 
     // Construct update object with provided fields
     const updateFields = {
-      firstName: req.body.firstName,
-      lastName: req.body.lastName,
-      address: req.body.address,
-      city: req.body.city,
-      state: req.body.state,
-      zipCode: req.body.zipCode,
-      email: req.body.email,
-      loginName: req.body.loginName,
-      password: req.body.password,
+      firstName: req.body.formData.firstName || req.user.firstName,
+      lastName: req.body.formData.lastName || req.user.lastName,
+      address: req.body.formData.address || req.user.address,
+      city: req.body.formData.city || req.user.city,
+      state: req.body.formData.state || req.user.state,
+      zipCode: req.body.formData.zipCode || req.user.zipCode,
+      email: req.body.formData.email || req.user.email,
+      loginName: req.body.formData.loginName || req.user.loginName,
+      password: hashedPassword || req.user.password,
     };
 
     // Update the user in the database
@@ -54,6 +56,8 @@ const updateUser = async (req, res, next) => {
     next(error);
   }
 };
+
+
 
 
 // delete user
