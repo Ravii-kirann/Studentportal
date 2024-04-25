@@ -106,6 +106,7 @@ const resetPassword = async (req, res) => {
     try {
         const { id, token } = req.params;
         const { password, confirmPassword } = req.body;
+        console.log("req.body",req.body)
 
         if (password !== confirmPassword) {
             return res.status(400).send('Password does not match confirm password');

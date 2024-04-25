@@ -44,12 +44,13 @@ export default function People() {
         <div id="searchResults" class="search-results">
           {people && people?.length >0
           && <table class="result-table" style={{margin: '0px auto'}}>
-            <tr><th>Name</th><th>department</th><th>phone number</th><th>email</th></tr>
+            <tr><th>Name</th><th>department</th><th>phone number</th><th>email</th><th>type</th></tr>
             {people && people?.map(item => (<tr>
               <td>{item?.firstName + ' ' + item?.lastName}</td>
               <td>{item?.department}</td>
               <td>{item?.phoneNumber}</td>
               <td>{item?.email}</td>
+              <td>{item?.type}</td>
             </tr>))}
           </table>}
         </div>

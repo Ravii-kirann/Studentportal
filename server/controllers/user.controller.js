@@ -17,13 +17,12 @@ const updateUser = async (req, res, next) => {
     if (req.user.id !== req.params.id) {
       return next(errorHandler(401, 'You can update only your account!'));
     }
-    const password  = req.body.formData.password
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
+  
     // Check if password field exists and hash it if provided
-    if (req.body.password) {
-      req.body.password = bcrypt.hashSync(req.body.password, 10);
+    if (req.body.formData.password) {
+      req.body.formData.password = bcrypt.hashSync(req.body.formData.password, 10);
     }
+    console.log("previous user details",req.user)
 
     // Construct update object with provided fields
     const updateFields = {
@@ -35,7 +34,7 @@ const updateUser = async (req, res, next) => {
       zipCode: req.body.formData.zipCode || req.user.zipCode,
       email: req.body.formData.email || req.user.email,
       loginName: req.body.formData.loginName || req.user.loginName,
-      password: hashedPassword || req.user.password,
+      password: req.body.password || req.user.password,
     };
 
     // Update the user in the database

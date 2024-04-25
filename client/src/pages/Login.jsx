@@ -48,7 +48,8 @@ const Login = () => {
 
   return (<>
   {/* <Header /> */}
-  <Header />
+  {/* <Header /> */}
+  <h1 >Student DashBoard Login</h1>
     <div className={styles.container}>
         <h2 className={styles.h2}>Login</h2>
         <div id="login-form">
