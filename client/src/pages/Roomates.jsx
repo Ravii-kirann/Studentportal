@@ -61,7 +61,7 @@ export default function Roomates() {
         </div>
         {roomMates && roomMates?.length >0
           && <table class="result-table" style={{margin: '0px auto'}}>
-            <tr><th>name</th><th>gender</th><th>moveInDate</th><th>priceRange</th></tr>
+            <tr><th>name</th><th>gender</th><th>priceRange</th><th>moveInDate</th></tr>
             {roomMates && roomMates?.map((item, index) => (<tr key={index}>
                 {console.log(item)}
               <td>{item?.name}</td>
