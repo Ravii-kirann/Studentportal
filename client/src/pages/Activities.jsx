@@ -66,22 +66,12 @@ export default function Activities() {
         {activities && activities?.length >0
           && <table class="result-table"  style={{margin: '0px auto'}}>
             <tr><th>name</th><th>description</th><th>date</th></tr>
-            {activities && activities.length > 0 && (
-    <table className="result-table" style={{ margin: '0px auto' }}>
-        <thead>
-            <tr><th>name</th><th>description</th><th>date</th></tr>
-        </thead>
-        <tbody>
-            {activities.map((item, index) => (
-                <tr key={index}>
-                    <td>{item.name}</td>
-                    <td>{item.description}</td>
-                    <td>{DateFormater(item.date)}</td>
-                </tr>
-            ))}
-        </tbody>
-    </table>
-)}
+            {activities && activities?.map((item, index) => (<tr key={index}>
+                {console.log(item)}
+              <td>{item?.name}</td>
+              <td>{item?.description}</td>
+              <td>{DateFormater(item?.date)}</td>
+            </tr>))}
           </table>}
     </div>
     <style>
