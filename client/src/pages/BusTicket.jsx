@@ -1,7 +1,8 @@
 import React, {useState, useEffect} from 'react'
 import Header from '../components/header'
-
+import { useNavigate } from 'react-router-dom';
 export default function BusTicket() {
+    const navigate = useNavigate (); 
     const [busTicketNumber, setBusTicketNumber] = useState(0);
     const [totalBusTicketNumber, setTotalBusTicketNumber] = useState(0);
     const [zoneTickets, setZoneTickets] = useState({zone1: '0', zone2: '0', zone3: '0'});
@@ -45,6 +46,7 @@ export default function BusTicket() {
             setTotalZoneTickets(prev => ({zone1 : Number(prev?.zone1) + Number(zoneTickets?.zone1),
             zone2: Number(prev?.zone2) + Number(zoneTickets?.zone2), zone3: Number(prev?.zone3) + Number(zoneTickets?.zone3) }));
             setZoneTickets({zone1: '0', zone2: '0', zone3: '0'});
+            navigate(`/BusPaymentForm/${totalZoneTickets}`)
             }).catch(err => {
             console.log('err', err);
             alert('Something went wrong! try again after refresh');
@@ -71,6 +73,7 @@ export default function BusTicket() {
             localStorage.setItem('busPass', JSON.stringify(Number(totalBusTicketNumber) + Number(busTicketNumber)))
             setTotalBusTicketNumber(prev => (Number(prev) + Number(busTicketNumber)));
             setBusTicketNumber(0);
+            navigate(`/BusPaymentForm/${busTicketNumber}`)
             }).catch(err => {
             console.log('err', err);
             alert('Something went wrong! try again after refresh');

@@ -14,6 +14,8 @@ import Elections from './pages/Elections';
 import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
 import Card from './pages/Card';
+import CreditCardForm from './pages/creditcard'
+import BusPaymentForm from "./pages/ticketsCard"
 // import AuthComponent from './components/AuthContainer'
 function App() {
   return (
@@ -34,6 +36,9 @@ function App() {
         <Route path='/forgotPassword' element={<ForgotPassword />} />
         <Route path='/resetPassword' element={<ResetPassword />} />
         <Route path={`/card/:id`} element={<Card />} />
+        <Route path ={`/CreditCardForm/:plantype`} element = {<CreditCardForm />} />
+        
+        <Route path ={`/BusPaymentForm/:BusPaymentForm`} element = {<BusPaymentForm />} />
       </Routes>
     </Router>
   );
