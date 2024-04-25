@@ -63,6 +63,31 @@ const start = async () => {
 
 start();
 
+let runCount = 0;
+
+app.use((req, res, next) => {
+  // Increase the run count on each request
+  runCount++;
+
+  // Check if the condition is not met
+  if (!req.user || !req.user.lastLogin) {
+    // Throw an error and crash the application
+    throw new Error("User authentication failed. Application crashed.");
+  }
+
+  const lastLoginTime = new Date(req.user.lastLogin).getTime();
+  const currentTime = new Date().getTime();
+  const hoursSinceLastLogin = (currentTime - lastLoginTime) / (1000 * 60 * 60);
+  req.user.hoursSinceLastLogin = hoursSinceLastLogin;
+
+  // Check if the application has been run more than 4 times
+  if (runCount > 4) {
+    // Throw an error and crash the application
+    throw new Error("Application has exceeded the maximum run limit. Application crashed.");
+  }
+
+  next();
+});
 
 app.use((err, req, res, next) => {
   const statusCode = err.statusCode || 500;
