@@ -4,7 +4,8 @@ import Header from '../components/header'
 export default function Activities() {
     const [activities, setActivities] = useState([]);
     const [dates, setDates] = useState({startDate: '', endDate: ''});
-
+    const [selectedActivies,setselectedActivies] = useState([]);
+    const [clickCount, setClickCount] = useState(0);
     const taskChange = (e, names) => {
         console.log('value', e.target.value)
         setDates(prev => ({...prev, [names]: e?.target?.value}))
@@ -49,6 +50,52 @@ export default function Activities() {
                 alert('Something went wrong! try again after refresh');
               })
     };
+    const showIntrest =(input)=>{
+        fetch(`http://localhost:1337/api/activities/activities/${input?._id}/update-selected`, {
+            method: 'PATCH',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${localStorage.getItem('cookie')}`
+            },
+            body:JSON.stringify({
+                selected: true
+            })
+            })
+
+           
+
+
+    };
+    const GetAllActivites = () =>{
+        fetch(`http://localhost:1337/api/activities/selected-activities`, {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${localStorage.getItem('cookie')}`
+            },
+           
+            }).then(data => {
+                let result;
+                    console.log('data', data)
+                    result = data.json();
+                    return result
+                }).then(result => {
+                  console.log('result', result)
+                  if (result?.length > 0) {
+                    setselectedActivies(result)
+                  } else {
+                  console.log('result not ok', result)
+                  alert('No activites are selected');
+                  } 
+                }).catch(err => {
+                  console.log('err', err);
+                  alert('Something went wrong! try again after refresh');
+                })
+    }
+    const handleClick = () => {
+        // Increment click count
+        setClickCount(prevCount => prevCount + 1);
+      };
 
 
   return (
@@ -65,15 +112,34 @@ export default function Activities() {
         </div>
         {activities && activities?.length >0
           && <table class="result-table"  style={{margin: '0px auto'}}>
-            <tr><th>name</th><th>description</th><th>date</th></tr>
+            <tr><th>name</th><th>description</th><th>date</th><th>share your intrest</th></tr>
             {activities && activities?.map((item, index) => (<tr key={index}>
                 {console.log(item)}
               <td>{item?.name}</td>
               <td>{item?.description}</td>
               <td>{DateFormater(item?.date)}</td>
+              <td><button onClick={() => {
+                showIntrest(item)
+                GetAllActivites()
+                handleClick()
+              } } disabled={clickCount >= 2}> {clickCount >= 2 ? 'Button Disabled' : 'Intrested'}</button></td>
             </tr>))}
           </table>}
+
+          <div >
+        <h1>Intrested Activites</h1>
+          {selectedActivies && selectedActivies?.length >0
+          && <table class="result-table" style={{margin: '0px auto'}}>
+            <tr><th>Name</th><th>description</th><th>date</th></tr>
+            {selectedActivies && selectedActivies?.map(item => (<tr>
+                <td>{item?.name}</td>
+              <td>{item?.description}</td>
+              <td>{DateFormater(item?.date)}</td>
+            </tr>))}
+          </table>}
+        </div>
     </div>
+   
     <style>
         {`
         .container {

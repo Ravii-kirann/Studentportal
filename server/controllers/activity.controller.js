@@ -38,20 +38,26 @@ const activitySelected = async (req, res) => {
 }
 const createActivity = async (req, res) => {
     try {
-        // Extract data from request body
-        const { name, date, description } = req.body;
+      
+        let { name, date, description, selected } = req.body;
 
-        // Parse date string to a Date object
+      
         const parsedDate = new Date(date);
 
-        // Create new activity
+      
+        if (selected === undefined) {
+            selected = false;
+        }
+
+       
         const newActivity = new Activity({
             name,
             date: parsedDate,
-            description
+            description,
+            selected
         });
 
-        // Save the activity to the database
+     
         const savedActivity = await newActivity.save();
 
         res.status(201).json(savedActivity); // Send the saved activity as response
@@ -59,8 +65,47 @@ const createActivity = async (req, res) => {
         console.error("Error occurred:", error);
         res.status(500).json({ error: 'An error occurred while creating activity' });
     }
-}
+};
+
+const getSelectedActivities = async (req, res) => {
+    try {
+        
+        const selectedActivities = await Activity.find({ selected: true });
+
+    
+        res.status(200).json(selectedActivities);
+    } catch (error) {
+       
+        res.status(500).json({ message: error.message });
+    }
+};
+const updateActivitySelectedStatus = async (req, res) => {
+    const  {id}  = req.params;
+    const  {selected}  = req.body;
+
+    try {
+        // Find the activity by ID
+        const activity = await Activity.findById(id);
+
+        if (!activity) {
+            return res.status(404).json({ error: 'Activity not found' });
+        }
+         if(selected == undefined){
+            selected = false
+         }
+        // Update the selected property
+        activity.selected = selected;
+
+        // Save the updated activity
+        const updatedActivity = await activity.save();
+
+        res.status(200).json(updatedActivity);
+    } catch (error) {
+        console.error('Error occurred:', error);
+        res.status(500).json({ error: 'An error occurred while updating the activity' });
+    }
+};
 const test =(req,res)=>{
    res.send("working")
 }
-module.exports = {activitySelected,createActivity,test};
+module.exports = {activitySelected,createActivity,test,getSelectedActivities,updateActivitySelectedStatus};
