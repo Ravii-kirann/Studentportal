@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, {useEffect, useState} from 'react'
 import Header from '../components/header'
 import { useNavigate } from 'react-router-dom';
 
@@ -6,6 +6,13 @@ export default function TextBook() {
   const navigate = useNavigate();
     const [query, setQuery] = useState('');
     const [books, setBooks] = useState([]);
+    const [purchasedBooks, setPurchasedBooks] = useState([]);
+    useEffect(()=>{
+      let totalBooks = JSON.parse(localStorage.getItem('books'));
+      if(totalBooks) {
+        setPurchasedBooks([...totalBooks])
+      }
+    },[])
 
     const search = () => {
         fetch(`http://localhost:1337/api/book/search/${query}`, {
@@ -34,7 +41,8 @@ export default function TextBook() {
     }
 
     const buyBook = (item) => {
-        console.log('item', item)
+        console.log('item', item);
+        localStorage.setItem('cart', JSON.stringify(item));
         navigate(`/card/${item?._id}`)
     }
   return (
@@ -64,6 +72,19 @@ export default function TextBook() {
               }}>Buy</button></td>
             </tr>))}
           </table>}
+          {purchasedBooks && purchasedBooks?.length > 0 &&(<>
+            <h1>Purchased Books</h1>
+            <table class="result-table" style={{margin: '0px auto'}}>
+            <tr><th>Title</th><th>Author</th><th>Price</th></tr>
+          {purchasedBooks && purchasedBooks?.map(item => (<tr>
+            <td>{item?.title}</td>
+              <td>{item?.author}</td>
+              <td>{item?.price}</td>
+          </tr>))}
+          </table>
+          </>
+          )
+          }
     </div>
     <style>
         {`

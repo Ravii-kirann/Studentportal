@@ -9,7 +9,8 @@ export default function Card() {
         setId(window.location.pathname.split("/")?.[2])
     },[])
     const handleSubmit = () => {
-        let totalBooks = localStorage.getItem('books')
+        let totalBooks = localStorage.getItem('books');
+        let tempcart = JSON.parse(localStorage.getItem('cart'));
         if (!totalBooks) {
             localStorage.setItem('books', JSON.stringify([]))
         }
@@ -31,7 +32,8 @@ export default function Card() {
               }).then(result => {
                 console.log('result', result)
                 if (result) {
-                    localStorage.setItem('books', JSON.stringify([ ...(totalBooks||[]), result]))
+                    localStorage.setItem('books', JSON.stringify([ ...(totalBooks||[]), tempcart]));
+                    localStorage.setItem('cart', JSON.stringify({}));
                     alert('Purchase successfull')
                     if(result?.discountApplied) {
                         alert('10% discount is available in the next purchase')
